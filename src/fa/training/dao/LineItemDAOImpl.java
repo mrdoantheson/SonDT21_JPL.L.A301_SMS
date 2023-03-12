@@ -11,7 +11,7 @@ import static fa.training.common.SqlStatementConstant.*;
 
 public class LineItemDAOImpl implements LineItemDAO {
     @Override
-    public boolean addLineItem(LineItem item) {
+    public void addLineItem(LineItem item) {
         try (Connection connection = DBUtils.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(ADD_LINEITEM);
             statement.setInt(1, item.getOrderId());
@@ -20,10 +20,8 @@ public class LineItemDAOImpl implements LineItemDAO {
             statement.setDouble(4, item.getPrice());
 
             int rowAffected = statement.executeUpdate();
-            return rowAffected == 1;
-        } catch (SQLException e) {
+            } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
-    }
+        }
 }

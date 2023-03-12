@@ -2,48 +2,63 @@ package fa.training.main;
 
 import fa.training.dao.*;
 import fa.training.entities.Customer;
-import fa.training.entities.LineItem;
-import fa.training.entities.Order;
+import fa.training.entities.LineItem;import fa.training.entities.Order;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
 public class SaleManagement {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         CustomerDAO customerDAO = new CustomerDAOImpl();
         OrderDAO orderDAO = new OrderDAOImpl();
         LineItemDAO lineItemDAO = new LineItemDAOImpl();
         int choice;
+        boolean running = true;
         do {
             printMenu();
             System.out.print("Your choice: ");
             choice = scanner.nextInt();
             switch (choice) {
                 case 1 -> {
-                    List<Customer> customerList = customerDAO.getAllCustomers();
                     System.out.println();
+                    System.out.println("--------- List all customers in the database ---------");
+                    List<Customer> customerList = customerDAO.getAllCustomers();
                     customerList.forEach(System.out::println);
                     System.out.println();
                 }
                 case 2 -> {
+                    System.out.print("Enter customer ID: ");
+                    int customerId = scanner.nextInt();
+
                     System.out.println();
-                    orderDAO.getAllOrdersByCustomerId(1).forEach(System.out::println);
+                    System.out.println("--------- List all orders by customer id in the database ---------");
+                    orderDAO.getAllOrdersByCustomerId(customerId).forEach(System.out::println);
                     System.out.println();
                 }
                 case 3 -> {
+                    System.out.println("--------- List all items ---------");
+
+                    System.out.print("Enter order ID: ");
+                    int orderId = scanner.nextInt();
+
                     System.out.println();
-                    orderDAO.getAllItemsByOrderId(1).forEach(System.out::println);
+                    orderDAO.getAllItemsByOrderId(orderId).forEach(System.out::println);
                     System.out.println();
                 }
                 case 4 -> {
+                    System.out.println("--------- Compute order total ---------");
+
+                    System.out.print("Enter order ID: ");
+                    int orderId = scanner.nextInt();
+
                     System.out.println();
-                    System.out.println(orderDAO.computeOrderTotal(1));
+                    System.out.println(orderDAO.computeOrderTotal(orderId));
                     System.out.println();
                 }
                 case 5 -> {
                     System.out.println("--------- Insert a customer ---------");
+
                     System.out.print("Enter name: ");
                     scanner = new Scanner(System.in);
                     String customerName = scanner.nextLine();
@@ -52,7 +67,12 @@ public class SaleManagement {
                     System.out.println("--------- Insert success ---------");
                 }
                 case 6 -> {
-                    System.out.println("Delete customer: " + customerDAO.deleteCustomer(1));
+                    System.out.println("--------- Delete a customer ---------");
+
+                    System.out.println("Enter customer ID: ");
+                    int customerId = scanner.nextInt();
+
+                    System.out.println("Delete customer: " + customerDAO.deleteCustomer(customerId));
                 }
                 case 7 -> {
                     System.out.println("--------- Update a customer ---------");
@@ -67,6 +87,22 @@ public class SaleManagement {
                     customerDAO.updateCustomer(customer);
 
                     System.out.println("--------- Update success ---------");
+                }
+                case 8 -> {
+                    System.out.println("--------- Insert a order ---------");
+
+                    System.out.print("Enter customer ID: ");
+                    int customerID = scanner.nextInt();
+
+                    System.out.print("Enter employee ID: ");
+                    int employeeID = scanner.nextInt();
+
+                    System.out.print("Enter total: ");
+                    int total = scanner.nextInt();
+
+                    orderDAO.addOrder(new Order(customerID, employeeID, total));
+
+                    System.out.println("--------- Insert success ---------");
                 }
                 case 9 -> {
                     System.out.println("--------- Insert an order ---------");
@@ -84,17 +120,15 @@ public class SaleManagement {
                     System.out.print("Enter price: ");
                     int price = scanner.nextInt();
 
-                    LineItem lineItem = new LineItem();
                     lineItemDAO.addLineItem(new LineItem(orderId, productId, quantity, price));
 
                     System.out.println("--------- Insert success ---------");
                 }
-                case 10 -> {
-                    System.out.println("Update total: " + orderDAO.updateOrderTotal(6));
-                }
+                case 10 -> System.out.println("Update total: " + orderDAO.updateOrderTotal(6));
+                case 11 -> running = false;
                 default -> System.out.println("Please input number in range 0 - 10");
             }
-        } while (choice != 0);
+        } while (running);
     }
 
     private static void printMenu() {

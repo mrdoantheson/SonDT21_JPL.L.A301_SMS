@@ -38,18 +38,16 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean addCustomer(Customer customer) {
+    public void addCustomer(Customer customer) {
         try (Connection connection = DBUtils.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(ADD_CUSTOMER);
             statement.setString(1, customer.getCustomerName());
 
             int rowAffected = statement.executeUpdate();
-            return rowAffected == 1;
-        } catch (SQLException e) {
+            } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
-    }
+        }
 
     @Override
     public boolean deleteCustomer(int customerId) {
@@ -65,7 +63,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean updateCustomer(Customer customer) {
+    public void updateCustomer(Customer customer) {
         if (customer == null || customer.getCustomerId() == 0) {
             throw new IllegalArgumentException("Customer is invalid");
         }
@@ -75,10 +73,8 @@ public class CustomerDAOImpl implements CustomerDAO {
             statement.setInt(2, customer.getCustomerId());
 
             int rowAffected = statement.executeUpdate();
-            return rowAffected == 1;
-        } catch (SQLException e) {
+            } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
-    }
+        }
 }

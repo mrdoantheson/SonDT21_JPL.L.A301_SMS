@@ -16,9 +16,6 @@ public class OrderDAOImpl implements OrderDAO {
 
     /**
      * List all orders consist of order id, order date, customer id, employee id, total for a customer
-     *
-     * @return
-     * @throws SQLException
      */
     @Override
     public List<Order> getAllOrdersByCustomerId(int customerId) {
@@ -97,8 +94,8 @@ public class OrderDAOImpl implements OrderDAO {
             PreparedStatement statement = connection.prepareStatement(ADD_ORDER);
             statement.setInt(1, order.getCustomerId());
             statement.setInt(2, order.getEmployeeId());
-            statement.setInt(3, order.getEmployeeId());
-            statement.setDouble(4, order.getTotal());
+            statement.setDouble(3, order.getTotal());
+            statement.execute();
 
             int rowAffected = statement.executeUpdate();
             return rowAffected == 1;

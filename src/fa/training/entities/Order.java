@@ -12,6 +12,8 @@ public class Order {
     public Order() {
     }
 
+
+
     public Order(int orderId, Date orderDate, int customerId, int employeeId, double total) {
         this.orderId = orderId;
         this.orderDate = orderDate;
@@ -20,8 +22,7 @@ public class Order {
         this.total = total;
     }
 
-    public Order(int orderId, int customerId, int employeeId, double total) {
-        this.orderId = orderId;
+    public Order(int customerId, int employeeId, double total) {
         this.customerId = customerId;
         this.employeeId = employeeId;
         this.total = total;

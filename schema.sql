@@ -68,6 +68,8 @@ INSERT INTO `Order` (order_date, customer_id, employee_id, total) VALUES (CURDAT
 INSERT INTO `Order` (order_date, customer_id, employee_id, total) VALUES (CURDATE(), 2, 3, 0);
 INSERT INTO `Order` (order_date, customer_id, employee_id, total) VALUES (CURDATE(), 2, 1, 0);
 INSERT INTO `Order` (order_date, customer_id, employee_id, total) VALUES (CURDATE(), 5, 1, 0);
+INSERT INTO `Order` (order_date, customer_id, employee_id, total) VALUES (CURDATE(), 5, 3, 0);
+INSERT INTO `Order` (order_date, customer_id, employee_id, total) VALUES (CURDATE(), 6, 1, 0);
 
 
 SELECT c.customer_id, c.customer_name FROM Customer c
@@ -90,13 +92,11 @@ SELECT SUM(I.price * i.quantity) AS total_price
 FROM LineItem i WHERE I.order_id = 6
 GROUP BY i.order_id;
 
-# ALTER TABLE LineItem DROP FOREIGN KEY lineitem_ibfk_11;
+ALTER TABLE LineItem ADD CONSTRAINT FOREIGN KEY (order_id) REFERENCES `Order` (order_id);
+ALTER TABLE LineItem ADD CONSTRAINT FOREIGN KEY (product_id) REFERENCES Product (product_id);
 
-ALTER TABLE LineItem ADD FOREIGN KEY (order_id) REFERENCES `Order` (order_id) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE LineItem ADD FOREIGN KEY (product_id) REFERENCES Product (product_id) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `Order` ADD FOREIGN KEY (customer_id) REFERENCES Customer (customer_id) ON DELETE CASCADE;
-ALTER TABLE `Order` ADD FOREIGN KEY (employee_id) REFERENCES Employee (employee_id) ON DELETE CASCADE;
+ALTER TABLE `Order` ADD FOREIGN KEY (customer_id) REFERENCES Customer (customer_id);
+ALTER TABLE `Order` ADD FOREIGN KEY (employee_id) REFERENCES Employee (employee_id);
 
 SELECT  * FROM `Order`;
 
@@ -105,3 +105,22 @@ UPDATE `Order` SET total =
                         FROM LineItem i WHERE I.order_id = ?
                         GROUP BY i.order_id
                        ) WHERE order_id = ?;
+
+INSERT INTO LineItem (order_id, product_id, quantity, price) VALUES (6, 1, 2, 1000);
+
+delete from LineItem where order_id = 6  and product_id = 1;
+
+UPDATE Customer SET customer_name = ? WHERE customer_id = ?;
+
+DELIMITER $$
+CREATE PROCEDURE usp_Customer_deleteById(
+    CustomerID INT
+)
+BEGIN
+DELETE FROM LineItem WHERE order_id IN (SELECT order_id FROM  `Order` WHERE customer_id = @CustomerID);
+DELETE FROM `Order` WHERE customer_id = @CustomerID;
+DELETE FROM Customer WHERE customer_id = @CustomerID;
+END; $$
+DELIMITER $$
+
+CALL usp_Customer_deleteById (?);
